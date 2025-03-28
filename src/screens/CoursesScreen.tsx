@@ -1,50 +1,78 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
 import { courses } from '../types/Course';
-
-type RootStackParamList = {
-  Login: undefined;
-  Welcome: { username: string };
-  Courses: { username: string };
-};
+import { RootStackParamList } from '../../App';
 
 type CoursesScreenProps = NativeStackScreenProps<RootStackParamList, 'Courses'>;
 
-export default function CoursesScreen({ route }: CoursesScreenProps) {
+export default function CoursesScreen({ route, navigation }: CoursesScreenProps) {
   const { username } = route.params;
 
   return (
-    <FlatList
-      data={courses}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <View style={styles.container}>
-          <Text style={styles.title}>{item.id} {item.name}</Text>
-          <Text style={styles.message}>Giảng viên: {item.lecturer}</Text>
-          <Text style={styles.message}>Phòng học: {item.room}</Text>
-          <Text style={styles.message}>Tiết: {item.period}</Text>
-        </View>
-      )}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={courses}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.courseCard}
+            onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
+          >
+            <Text style={styles.courseCode}>{item.id}</Text>
+            <Text style={styles.courseName}>{item.name}</Text>
+            <View style={styles.courseInfo}>
+              <Text style={styles.infoText}>Giảng viên: {item.lecturer}</Text>
+              <Text style={styles.infoText}>Phòng học: {item.room}</Text>
+              <Text style={styles.infoText}>Tiết: {item.period}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  listContainer: {
+    padding: 16,
+  },
+  courseCard: {
     backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  message: {
-    fontSize: 20,
+  courseCode: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#666',
   },
-}); 
+  courseName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  courseInfo: {
+    gap: 4,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#666',
+  },
+});
