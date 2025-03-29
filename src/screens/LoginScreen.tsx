@@ -23,7 +23,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     // For demo purposes, we'll use a simple validation
     if (username === 'admin' && password === 'password') {
       setIsPasswordError(false);
-      navigation.navigate('Welcome', { username });
+      // navigation.navigate('Welcome', { username });
+      navigation.navigate('Employees', { username });
     } else {
       setIsPasswordError(true);
       Alert.alert('Error', 'Invalid username or password');
