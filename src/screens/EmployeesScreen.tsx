@@ -34,6 +34,13 @@ export default function EmployeesScreen({ route, navigation }: EmployeesScreenPr
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity 
+        style={styles.addButton}
+        onPress={() => navigation.navigate('CreateEmployee', { username })}
+      >
+        <Text style={styles.addButtonText}>+ Thêm nhân viên</Text>
+      </TouchableOpacity>
+
       <FlatList
         data={employees}
         keyExtractor={(item) => item.id.toString()}
@@ -89,5 +96,18 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     color: '#666',
+  },
+  addButton: {
+    backgroundColor: '#4CD964',
+    padding: 16,
+    borderRadius: 8,
+    margin: 16,
+    marginBottom: 0,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

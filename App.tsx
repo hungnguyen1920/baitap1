@@ -11,7 +11,9 @@ export type RootStackParamList = {
   Welcome: { username: string };
   Employees: { username: string };
   EmployeeDetail: { employeeId: number };
-  CreateEmployee: { username: string };
+  CreateEmployee: {
+    username: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,11 +42,11 @@ export default function App() {
           component={EmployeeDetailScreen}
           options={{ headerLeft: () => null }}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="CreateEmployee"
           component={CreateEmployeeScreen}
           options={{ headerLeft: () => null }}
-        /> */}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
