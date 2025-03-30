@@ -7,27 +7,25 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 
 type EmployeesScreenProps = NativeStackScreenProps<RootStackParamList, 'Employees'>;
 
-
 export default function EmployeesScreen({ route, navigation }: EmployeesScreenProps) {
   const { username } = route.params;
-    const [employees, setEmployees] = useState<Employee[]>([]);
-    const [loading, setLoading] = useState<Boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState<Boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => { 
-        async function fetchEmployees(): Promise<void> {
-            setLoading(true);
-            try {
-                const data = await employeeServices.getEmployees();
-                setEmployees(data);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to fetch employees');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchEmployees();
-    }, []);
+  useEffect(() => { fetchEmployees(); }, []);
+
+  async function fetchEmployees(): Promise<void> {
+      setLoading(true);
+      try {
+          const data = await employeeServices.getEmployees();
+          setEmployees(data);
+      } catch (err) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch employees');
+      } finally {
+          setLoading(false);
+      }
+    };
 
   return (
     <View style={styles.container}>
@@ -40,8 +38,8 @@ export default function EmployeesScreen({ route, navigation }: EmployeesScreenPr
             style={styles.employeeCard}
             onPress={() => navigation.navigate('EmployeeDetail', {employeeId: item.id })}
           >
-            <Text style={styles.courseCode}>Họ và tên: {item.employee_name}</Text>
-            {/* <Text style={styles.courseName}>{item.employee_name}</Text> */}
+            <Text style={styles.employeeCode}>Mã nhân viên: {item.id}</Text>
+            <Text style={styles.employeeCode}>Họ và tên: {item.employee_name}</Text>
             <View style={styles.employeeInfo}>
               <Text style={styles.infoText}>Tuổi: {item.employee_age}</Text>
               <Text style={styles.infoText}>Lương: {item.employee_salary}</Text>
@@ -75,17 +73,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  courseCode: {
+  employeeCode: {
     fontSize: 16,
     fontWeight: '600',
     color: '#666',
-  },
-  courseName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 4,
-    marginBottom: 12,
   },
   employeeInfo: {
     gap: 4,

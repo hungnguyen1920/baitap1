@@ -52,16 +52,16 @@ export class EmployeeServices {
     }
   }
 
-  public async updateEmployee(employeeId: number): Promise<Employee> {
+  public async updateEmployee(employee: Employee): Promise<Employee> {
     try {
       const response = await fetch(
-        `http://blackntt.net:88/api/v1/update/${employeeId}`,
+        `http://blackntt.net:88/api/v1/update/${employee.id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(employeeId),
+          body: JSON.stringify(employee),
         }
       );
       if (!response.ok) {
