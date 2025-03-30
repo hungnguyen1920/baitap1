@@ -4,6 +4,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { Employee } from '../types/Employee';
 import employeeServices from '../services/EmployeeServices';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
 
 type EmployeeDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'EmployeeDetail'>;
 
@@ -25,7 +27,6 @@ export default function EmployeeDetailScreen({ route, navigation }: EmployeeDeta
     }
   }, [employee]);
 
-  // Kiểm tra xem có thay đổi nào không
   const hasChanges = useMemo(() => {
     if (!employee || !formData) return false;
     return (
@@ -52,7 +53,7 @@ export default function EmployeeDetailScreen({ route, navigation }: EmployeeDeta
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
+  async function handleSave(): Promise<void> {
     if (!formData || !hasChanges) return;
 
     try {
@@ -69,14 +70,96 @@ export default function EmployeeDetailScreen({ route, navigation }: EmployeeDeta
     }
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    if (employee) {
-      setFormData(employee); // Reset về dữ liệu ban đầu
+  async function handleDelete(): Promise<void> {
+    try {
+      await employeeServices.deleteEmployee(employeeId);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error:', error); 
+    } finally {
+      setLoading(false);
     }
   };
 
-  const renderContent = () => {
+  function handleCancel(): void {
+    setIsEditing(false);
+    if (employee) {
+      setFormData(employee);
+    }
+  };
+
+  // Xử lý back button
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (hasChanges) {
+          Alert.alert(
+            "Xác nhận",
+            "Bạn có thay đổi chưa được lưu. Bạn có chắc chắn muốn thoát không?",
+            [
+              {
+                text: "Tiếp tục chỉnh sửa",
+                style: "cancel",
+                onPress: () => null
+              },
+              {
+                text: "Thoát",
+                style: "destructive",
+                onPress: () => {
+                  setIsEditing(false);
+                  navigation.goBack();
+                }
+              }
+            ]
+          );
+          return true; // Prevents default back button behavior
+        }
+        return false; // Allows default back button behavior
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [hasChanges, navigation])
+  );
+
+  // Xử lý navigation back
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            if (hasChanges) {
+              Alert.alert(
+                "Xác nhận",
+                "Bạn có thay đổi chưa được lưu. Bạn có chắc chắn muốn thoát không?",
+                [
+                  {
+                    text: "Tiếp tục chỉnh sửa",
+                    style: "cancel",
+                    onPress: () => null
+                  },
+                  {
+                    text: "Thoát",
+                    style: "destructive",
+                    onPress: () => {
+                      setIsEditing(false);
+                      navigation.goBack();
+                    }
+                  }
+                ]
+              );
+            } else {
+              navigation.goBack();
+            }
+          }}
+        >
+          <Text style={{ color: '#007AFF', marginLeft: 10 }}>Quay lại</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, hasChanges]);
+
+  function renderContent(): React.JSX.Element | null {
     if (!employee || !formData) return null;
 
     return (
@@ -191,7 +274,15 @@ export default function EmployeeDetailScreen({ route, navigation }: EmployeeDeta
               
               <TouchableOpacity 
                 style={[styles.button, styles.deleteButton]} 
-                // onPress={handleDelete}
+                onPress={() => {
+                  Alert.alert("Xác nhận", "Bạn có chắc chắn muốn xóa nhân viên này không?", [
+                    {
+                      text: "Hủy",
+                      style: "cancel"
+                    },
+                    { text: "Xóa", onPress: () => handleDelete() }
+                  ]);
+                }}
               >
                 <Text style={[styles.buttonText, styles.deleteButtonText]}>Xóa</Text>
               </TouchableOpacity>
