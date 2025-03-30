@@ -71,7 +71,9 @@ export default function EmployeeDetailScreen({ route, navigation }: EmployeeDeta
 
   const handleCancel = () => {
     setIsEditing(false);
-    setFormData(employee); // Reset về dữ liệu ban đầu
+    if (employee) {
+      setFormData(employee); // Reset về dữ liệu ban đầu
+    }
   };
 
   const renderContent = () => {

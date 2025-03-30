@@ -1,9 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import employeeServices from '../services/EmployeeServices';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Employee } from '../types/Employee';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 type EmployeesScreenProps = NativeStackScreenProps<RootStackParamList, 'Employees'>;
 
@@ -13,7 +14,11 @@ export default function EmployeesScreen({ route, navigation }: EmployeesScreenPr
   const [loading, setLoading] = useState<Boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => { fetchEmployees(); }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchEmployees();
+    }, [])
+  );
 
   async function fetchEmployees(): Promise<void> {
       setLoading(true);
