@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { users } from '../MockData/UserMock';
+import { useFocusEffect } from '@react-navigation/native';
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -20,6 +21,18 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [password, setPassword] = useState('');
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const clearForm = useCallback(() => {
+    setUsername('');
+    setPassword('');
+    setIsPasswordError(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      clearForm();
+    }, [clearForm])
+  );
 
   const handleLogin = () => {
     if (users.find((user) => user.username === username && user.password === password)) {
