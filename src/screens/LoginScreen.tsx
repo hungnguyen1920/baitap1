@@ -23,7 +23,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   const handleLogin = () => {
     if (users.find((user) => user.username === username && user.password === password)) {
-      navigation.navigate('Welcome', { username });
+      // navigation.navigate('Welcome', { username });
+      navigation.navigate('ToDoList', { username });
     } else {
       setIsPasswordError(true);
       Alert.alert('Error', 'Invalid username or password');
