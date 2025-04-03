@@ -29,7 +29,6 @@
 ### Thử nghiệm dự án
 
 - Sử dụng thông tin đăng nhập sau để thử nghiệm:
-  - Tên người dùng: `admin`
-  - Mật khẩu: `password`
+  - Account test: `{ "username": "admin", "password": "123456" }, { "username": "user", "password": "123456" }`
 
 Khi bạn nhập đúng thông tin đăng nhập, bạn sẽ được chuyển đến màn hình chào mừng.
